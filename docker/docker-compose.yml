@@ -1,0 +1,35 @@
+version: '3'
+services:
+  neo4j:
+    image: neo4j
+    container_name: neo4j-apoc
+    environment:
+      - NEO4J_apoc_export_file_enabled=true
+      - NEO4J_apoc_import_file_enabled=true
+      - NEO4J_apoc_import_file_use__neo4j__config=true
+      - NEO4J_PLUGINS=["apoc"]
+      - NEO4J_AUTH=none
+    volumes:
+      - $HOME/neo4j/data:/data
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    networks:
+      - custom_network
+
+  jupyter:
+    build: .
+    container_name: yfiles-jupyter
+    ports:
+      - "8888:8888"
+    networks:
+      - custom_network
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+    command: start-notebook.sh --NotebookApp.token=''
+    volumes:
+      - $HOME/jupyter-work:/home/jovyan/
+
+networks:
+  custom_network:
+    driver: bridge
